@@ -13,6 +13,8 @@ cp ./${APP_NAME} ${INSTALL_PATH}
 cat >./${APP_NAME}.service <<-EOF
 [Unit]
 Description=${APP_NAME}
+After=network-online.target
+Wants=network-online.target
 [Service]
 User=root
 WorkingDirectory=${INSTALL_PATH}/${APP_NAME}
