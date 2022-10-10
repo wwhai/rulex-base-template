@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 INSTALL_PATH=/usr/local/rulexapp
-APP_NAME=yk8-gateway
+APP_NAME=rulex-gateway
 
 if [ ! -d "${INSTALL_PATH}" ]; then
     mkdir -p ${INSTALL_PATH}
@@ -13,14 +13,15 @@ cp ./${APP_NAME} ${INSTALL_PATH}
 cat >./${APP_NAME}.service <<-EOF
 [Unit]
 Description=${APP_NAME}
-After=network-online.target
+After=network-online.target rc-local.service nss-user-lookup.target
 Wants=network-online.target
+
 [Service]
 User=root
-WorkingDirectory=${INSTALL_PATH}/${APP_NAME}
-TimeoutStartSec=5
-ExecStart=./${APP_NAME}
-ExecStop=echo "${APP_NAME} stop."
+Type=simple
+WorkingDirectory=${INSTALL_PATH}
+ExecStart=${INSTALL_PATH}/${APP_NAME}
+
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -30,4 +31,5 @@ echo ">> systemctl command list: "
 echo "* sudo systemctl start ${APP_NAME}"
 echo "* sudo systemctl enable ${APP_NAME}"
 echo "* sudo systemctl status ${APP_NAME}"
+echo "* journalctl -u ${APP_NAME}"
 echo "--------------------------------------------------"
